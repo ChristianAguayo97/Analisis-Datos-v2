@@ -2,3 +2,4 @@ streamlit
 gspread
 pandas
 oauth2client
+ydata-profiling>=4.0.0
