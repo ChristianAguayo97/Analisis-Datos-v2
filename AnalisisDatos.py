@@ -112,9 +112,18 @@ def encontrar_mejor_header(df, max_filas=5):
 def generar_reporte(df, nombre_doc, nombre_hoja):
     if df.empty:
         return None
-        
+    columnas_validas = [
+        col for col in df.columns
+        if not df[col].apply(lambda x: isinstance(x, (list, dict, tuple, set))).any()
+    ]
+    df_filtrado = df[columnas_validas].copy()
+
+    # Opcional: podés mostrar las columnas excluidas
+    columnas_excluidas = set(df.columns) - set(columnas_validas)
+    if columnas_excluidas:
+        st.warning(f"Se excluyeron columnas no compatibles: {', '.join(columnas_excluidas)}")
     perfil = ProfileReport(
-        df,
+        df_filtrado,
         title=f"Reporte: {nombre_doc} - {nombre_hoja}",
         explorative=True,
         html={
@@ -123,6 +132,7 @@ def generar_reporte(df, nombre_doc, nombre_hoja):
         }
     )
     return perfil.to_html()
+
 
 
 st.sidebar.header("Configuración de Google Sheets")
