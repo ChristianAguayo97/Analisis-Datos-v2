@@ -82,9 +82,11 @@ def cargar_datos(spreadsheet_id, worksheet_id):
             new_header = df.iloc[header_row]
             df = df[header_row+1:]
             df.columns = new_header
-            df.columns = df.columns.astype(str)  
+            df.columns = df.columns.astype(str)
             df.reset_index(drop=True, inplace=True)
-
+            # Limpieza de nombres de columnas vacíos y duplicados
+            df.columns = [col.strip() if col.strip() != "" else f"Columna_{i}" for i, col in enumerate(df.columns)]
+            df = df.loc[:, ~df.columns.duplicated()]
         
         return df
     except Exception as e:
